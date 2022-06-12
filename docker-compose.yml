@@ -1,0 +1,27 @@
+version: "3.4"
+
+services:
+  backend:
+    container_name: node-stack
+    restart: always
+    build: .
+    ports:
+      - "8000:8000"
+      - "9229:9229" # debugger port
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: yarn start:docker
+    depends_on:
+      - postgres-db
+    environment:
+      PORT: 8000
+      DATABASE_URL: postgres://postgres@postgres-db/webapp_dev
+
+  postgres-db:
+    image: postgres:14.3
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: webapp_dev
+      POSTGRES_HOST_AUTH_METHOD: trust
